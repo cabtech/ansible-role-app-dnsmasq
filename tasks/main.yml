@@ -2,7 +2,7 @@
 - name: 'install Dnsmasq'
   apt:
     name: dnsmasq
-    state: {{dnsmasq_state}}
+    state: '{{dnsmasq_state}}'
     update_cache: false
   become: true
   tags: ct-dnsmasq
