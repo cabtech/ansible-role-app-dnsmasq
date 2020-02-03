@@ -8,6 +8,17 @@
   become: true
   tags: ct-dnsmasq
 
+- name: 'transfer script to brute force SystemD resolver service'
+  copy:
+    src: control_systemd_resolverd.sh
+    dest: /usr/local/bin/control_systemd_resolverd.sh
+    group: root
+    mode: '0755'
+    owner: root
+  become: true
+  tags:
+  - ct-dnsmasq
+
 - name: 'stop, disable and mask SystemD resolver service'
   systemd:
     name: systemd-resolved.service
