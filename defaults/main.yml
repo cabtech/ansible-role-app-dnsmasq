@@ -1,0 +1,9 @@
+---
+dnsmasq_resolv_conf: /etc/resolv.conf
+dnsmasq_domains: []
+dnsmasq_etc_dir: /etc/dnsmasq.d
+dnsmasq_listen_ip: 127.0.0.1
+dnsmasq_state: present
+# optional
+# dnsmasq_consul_port: 8600
+...

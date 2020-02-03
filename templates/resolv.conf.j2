@@ -1,0 +1,7 @@
+# MANAGED_BY_ANSIBLE
+# {{inventory_hostname}}
+nameserver 127.0.0.1
+options edns0
+{% for domain in dnsmasq_domains %}
+search {{domain}}
+{% endfor %}

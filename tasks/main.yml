@@ -1,0 +1,67 @@
+---
+- name: 'install Dnsmasq'
+  apt:
+    name: dnsmasq
+    state: {{dnsmasq_state}}
+    update_cache: false
+  become: true
+  tags: ct-dnsmasq
+
+- name: 'stop and disable SystemD resolver service'
+  systemd:
+    name: systemd-resolved.service
+    state: 'stopped'
+    enabled: false
+  become: true
+  tags:
+  - ct-dnsmasq
+  - ct-dnsmasq-svc
+
+- name: 'get status of {{dnsmasq_resolv_conf}} (CM:false)'
+  stat:
+    path: '{{dnsmasq_resolv_conf}}'
+  check_mode: false
+  register: stat_resolver
+  tags: ct-dnsmasq
+
+- name: 'remove {{dnsmasq_resolv_conf}} if it is a symlink'
+  file:
+    path: '{{dnsmasq_resolv_conf}}'
+    state: absent
+  when:
+  - stat_resolver.stat.islnk is defined
+  - stat_resolver.stat.islnk
+  become: true
+  tags: ct-dnsmasq
+
+- name: 'render Dnsmasq config file'
+  template:
+    src: default.j2
+    dest: '{{dnsmasq_etc_dir}}/default'
+    group: root
+    mode: '0644'
+    owner: root
+  become: true
+  tags: ct-dnsmasq
+
+- name: 'render {{dnsmasq_resolv_conf}}'
+  template:
+    src: default.j2
+    dest: '{{dnsmasq_etc_dir}}/default'
+    group: root
+    mode: '0644'
+    owner: root
+  become: true
+  tags: ct-dnsmasq
+
+- name: 'start Dnsmasq service'
+  systemd:
+    name: systemd-resolved.service
+    state: 'started'
+    enabled: true
+  become: true
+  tags:
+  - ct-dnsmasq
+  - ct-dnsmasq-svc
+
+...
