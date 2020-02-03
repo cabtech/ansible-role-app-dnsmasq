@@ -1,4 +1,5 @@
 ---
+dnsmasq_unit_name: dnsmasq.service
 dnsmasq_resolv_conf: /etc/resolv.conf
 dnsmasq_domains: []
 dnsmasq_etc_dir: /etc/dnsmasq.d
