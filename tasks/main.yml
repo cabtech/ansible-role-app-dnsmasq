@@ -8,13 +8,15 @@
   become: true
   tags: ct-dnsmasq
 
-- name: 'stop and disable SystemD resolver service'
+- name: 'stop, disable and mask SystemD resolver service'
   systemd:
     name: systemd-resolved.service
     state: stopped
     enabled: false
     masked: true
-  notify: handler_dnsmasq
+  notify:
+  - handler_dnsmasq
+  - handler_force_death_resolverd  # workaround
   become: true
   tags:
   - ct-dnsmasq

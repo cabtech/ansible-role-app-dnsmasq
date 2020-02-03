@@ -3,6 +3,8 @@
   systemd:
     daemon_reload: true
   become: true
-  tags:
-  - ct-dnsmasq
+
+- name: 'handler_force_death_resolverd'
+- shell: 'systemctl disable systemd-resolved.service && systemctl mask systemd-resolved.service'
+  become: true
 ...
