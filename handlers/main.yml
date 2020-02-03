@@ -1,0 +1,8 @@
+---
+- name: 'handler_dnsmasq'
+  systemd:
+    daemon_reload: true
+  become: true
+  tags:
+  - ct-dnsmasq
+...

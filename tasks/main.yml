@@ -4,14 +4,17 @@
     name: dnsmasq
     state: '{{dnsmasq_state}}'
     update_cache: false
+  notify: handler_dnsmasq
   become: true
   tags: ct-dnsmasq
 
 - name: 'stop and disable SystemD resolver service'
   systemd:
     name: systemd-resolved.service
-    state: 'stopped'
+    state: stopped
     enabled: false
+    masked: true
+  notify: handler_dnsmasq
   become: true
   tags:
   - ct-dnsmasq
@@ -57,8 +60,10 @@
 - name: 'start Dnsmasq service'
   systemd:
     name: systemd-resolved.service
-    state: 'started'
+    state: started
     enabled: true
+    masked: false
+  notify: handler_dnsmasq
   become: true
   tags:
   - ct-dnsmasq
