@@ -8,7 +8,7 @@
   become: true
   tags: ct-dnsmasq
 
-- name: 'transfer script to brute force SystemD resolver service'
+- name: 'transfer script to brute force systemd resolver service'
   copy:
     src: control_systemd_resolverd.sh
     dest: /usr/local/bin/control_systemd_resolverd.sh
@@ -19,14 +19,24 @@
   tags:
   - ct-dnsmasq
 
-- name: 'stop, disable and mask SystemD resolver service'
+- name: 'stop and disable Systemd resolver service'
   systemd:
     name: systemd-resolved.service
-    state: stopped
     enabled: false
-    masked: true
+    state: stopped
   notify:
   - handler_dnsmasq
+  - handler_force_death_resolverd  # workaround
+  become: true
+  tags:
+  - ct-dnsmasq
+  - ct-dnsmasq-svc
+
+- name: 'mask systemd resolver service'
+  systemd:
+    name: systemd-resolved.service
+    masked: true
+  notify:
   - handler_force_death_resolverd  # workaround
   become: true
   tags:
@@ -83,13 +93,12 @@
 - name: 'start Dnsmasq service'
   systemd:
     name: systemd-resolved.service
-    state: started
     enabled: true
     masked: false
+    state: started
   notify: handler_dnsmasq
   become: true
   tags:
   - ct-dnsmasq
   - ct-dnsmasq-svc
-
 ...
