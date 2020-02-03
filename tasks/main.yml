@@ -62,8 +62,8 @@
 
 - name: 'render {{dnsmasq_resolv_conf}}'
   template:
-    src: default.j2
-    dest: '{{dnsmasq_etc_dir}}/default'
+    src: resolv.conf.j2
+    dest: '{{dnsmasq_resolv_conf}}'
     group: root
     mode: '0644'
     owner: root
