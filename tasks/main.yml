@@ -57,6 +57,16 @@
   become: true
   tags: ct-dnsmasq
 
+- name: 'render details of fallback nameserver'
+  template:
+    src: forwarding_nameserver.j2
+    dest: /var/run/dnsmasq/resolv.conf
+    group: root
+    mode: '0644'
+    owner: root
+  become: true
+  tags: ct-dnsmasq
+
 - name: 'start Dnsmasq service'
   systemd:
     name: systemd-resolved.service

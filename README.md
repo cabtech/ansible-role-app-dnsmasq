@@ -6,6 +6,7 @@ Install and config Dnsmasq on Ubuntu
 | Name | Purpose | Example |
 | -----| ------- | ------- |
 | dnsmasq_domains | used to form the search directive in /etc/resolv.conf | ['eu-west-2.compute.internal'] |
+| dnsmasq_nameserver | external DNS for none-local requests | on AWS, will be your CIDR 'plus 2' =>  x.y.0.2 |
 
 ## Default variables
 | Name | Purpose | Value |

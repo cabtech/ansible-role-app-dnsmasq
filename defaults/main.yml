@@ -4,6 +4,8 @@ dnsmasq_domains: []
 dnsmasq_etc_dir: /etc/dnsmasq.d
 dnsmasq_listen_ip: 127.0.0.1
 dnsmasq_state: present
+# required
+# dnsmasq_nameserver - on AWS this will be the VPC CIDR x.y.0.2
 # optional
 # dnsmasq_consul_port: 8600
 ...
