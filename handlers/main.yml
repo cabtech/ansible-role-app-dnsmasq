@@ -5,6 +5,6 @@
   become: true
 
 - name: 'handler_force_death_resolverd'
-- shell: 'systemctl disable systemd-resolved.service && systemctl mask systemd-resolved.service'
+  shell: 'systemctl disable systemd-resolved.service && systemctl mask systemd-resolved.service'
   become: true
 ...
