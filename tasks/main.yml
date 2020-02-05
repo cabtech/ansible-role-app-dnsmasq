@@ -32,7 +32,7 @@
     group: root
     mode: '0644'
     owner: root
-  notify: handler_dnsmasq
+  notify: handler_restart_dnsmasq
   become: true
   tags: ct-dnsmasq
 
