@@ -1,10 +1,8 @@
 ---
 - name: 'handler_dnsmasq'
   systemd:
+    name: '{{dnsmasq_unit_name}}'
     daemon_reload: true
-  become: true
-
-- name: 'handler_force_death_resolverd'
-  shell: '/usr/local/bin/control_systemd_resolverd.sh absent'
+    state: restarted
   become: true
 ...
