@@ -50,7 +50,7 @@
 - name: 'render details of fallback nameserver'
   template:
     src: forwarding_nameserver.j2
-    dest: /var/run/dnsmasq/resolv.conf
+    dest: '{{dnsmasq_fallback_conf}}'
     group: root
     mode: '0644'
     owner: root
