@@ -10,7 +10,7 @@
 - name: 'handler_reboot_server'
   reboot:
     pre_reboot_delay: 10
-    reboot_timeout: 60
+    reboot_timeout: '{{dnsmasq_reboot_timeout}}'
   when: dnsmasq_ok_to_reboot
   become: true
 ...
