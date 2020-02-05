@@ -1,10 +1,12 @@
 ---
-dnsmasq_unit_name: dnsmasq.service
-dnsmasq_resolv_conf: /etc/resolv.conf
 dnsmasq_domains: []
 dnsmasq_etc_dir: /etc/dnsmasq.d
 dnsmasq_listen_ip: 127.0.0.1
+dnsmasq_ok_to_reboot: false
+dnsmasq_pkg_name: dnsmasq
+dnsmasq_resolv_conf: /etc/resolv.conf
 dnsmasq_state: present
+dnsmasq_unit_name: dnsmasq.service
 # required
 # dnsmasq_nameserver - on AWS this will be the VPC CIDR x.y.0.2
 # optional

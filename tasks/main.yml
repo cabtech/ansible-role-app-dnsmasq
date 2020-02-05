@@ -1,25 +1,11 @@
 ---
 - name: 'install Dnsmasq'
   apt:
-    name: dnsmasq
+    name: '{{dnsmasq_pkg_name}}'
     state: '{{dnsmasq_state}}'
     update_cache: false
-  notify: handler_dnsmasq
   become: true
   tags: ct-dnsmasq
-
-- name: 'stop, disable and mask systemd resolver service'
-  systemd:
-    name: systemd-resolved.service
-    enabled: false
-    masked: true
-    state: stopped
-  notify:
-  - handler_dnsmasq
-  become: true
-  tags:
-  - ct-dnsmasq
-  - ct-dnsmasq-svc
 
 - name: 'get status of {{dnsmasq_resolv_conf}} (CM:false)'
   stat:
@@ -35,7 +21,7 @@
   when:
   - stat_resolver.stat.islnk is defined
   - stat_resolver.stat.islnk
-  notify: handler_dnsmasq
+  notify: handler_restart_dnsmasq
   become: true
   tags: ct-dnsmasq
 
@@ -57,7 +43,7 @@
     group: root
     mode: '0644'
     owner: root
-  notify: handler_dnsmasq
+  notify: handler_restart_dnsmasq
   become: true
   tags: ct-dnsmasq
 
@@ -68,18 +54,27 @@
     group: root
     mode: '0644'
     owner: root
-  notify: handler_dnsmasq
+  notify: handler_restart_dnsmasq
   become: true
   tags: ct-dnsmasq
 
-- name: 'start Dnsmasq service'
+- name: 'disable and mask systemd resolver service'
+  systemd:
+    name: systemd-resolved.service
+    enabled: false
+    masked: true
+  notify: handler_reboot_server
+  become: true
+  tags:
+  - ct-dnsmasq
+
+- name: 'enable and unmask Dnsmasq service'
   systemd:
     name: '{{dnsmasq_unit_name}}'
     enabled: true
     masked: false
-    state: started
+  notify: handler_reboot_server
   become: true
   tags:
   - ct-dnsmasq
-  - ct-dnsmasq-svc
 ...
