@@ -3,7 +3,7 @@
   apt:
     name: '{{dnsmasq_pkg_name}}'
     state: '{{dnsmasq_state}}'
-    update_cache: false
+    update_cache: '{{dnsmasq_update_cache}}'
   become: true
   tags: ct-dnsmasq
 

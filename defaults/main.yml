@@ -9,8 +9,5 @@ dnsmasq_resolv_conf: /etc/resolv.conf
 dnsmasq_reboot_timeout: 90
 dnsmasq_state: present
 dnsmasq_unit_name: dnsmasq.service
-# required
-# dnsmasq_nameserver - on AWS this will be the VPC CIDR x.y.0.2
-# optional
-# dnsmasq_consul_port: 8600
+dnsmasq_update_cache: true
 ...
