@@ -1,6 +1,11 @@
 # MANAGED_BY_ANSIBLE
 nameserver 127.0.0.1
+{% if (ct_cloud | default('grounded')) == 'aws' %}
+options edns0 trust-ad
+{% else %}
 options edns0
+{% endif %}
 {% for domain in dnsmasq_domains %}
 search {{domain}}
 {% endfor %}
+# END
