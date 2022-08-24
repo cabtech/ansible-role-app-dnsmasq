@@ -1,80 +1,82 @@
 ---
-- name: 'install Dnsmasq'
-  apt:
+# --------------------------------
+
+- name: 'Install Dnsmasq'
+  ansible.builtin.apt:
     name: '{{dnsmasq_pkg_name}}'
     state: '{{dnsmasq_state}}'
     update_cache: '{{dnsmasq_update_cache}}'
   become: true
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'get status of {{dnsmasq_resolv_conf}} (CM:false)'
-  stat:
+- name: 'Get status of {{dnsmasq_resolv_conf}} (CM:false)'
+  ansible.builtin.stat:
     path: '{{dnsmasq_resolv_conf}}'
   check_mode: false
   register: stat_resolver
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'remove {{dnsmasq_resolv_conf}} if it is a symlink'
-  file:
+- name: 'Remove {{dnsmasq_resolv_conf}} if it is a symlink'
+  ansible.builtin.file:
     path: '{{dnsmasq_resolv_conf}}'
     state: absent
   when:
   - stat_resolver.stat.islnk is defined
   - stat_resolver.stat.islnk
-  notify: handler_restart_dnsmasq
+  notify: Handler_Restart_Dnsmasq
   become: true
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'render Dnsmasq config file'
-  template:
+- name: 'Render Dnsmasq config file'
+  ansible.builtin.template:
     src: default.j2
     dest: '{{dnsmasq_etc_dir}}/default'
     group: root
     mode: '0644'
     owner: root
-  notify: handler_restart_dnsmasq
+  notify: Handler_Restart_Dnsmasq
   become: true
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'render {{dnsmasq_resolv_conf}}'
-  template:
+- name: 'Render {{dnsmasq_resolv_conf}}'
+  ansible.builtin.template:
     src: resolv.conf.j2
     dest: '{{dnsmasq_resolv_conf}}'
     group: root
     mode: '0644'
     owner: root
-  notify: handler_restart_dnsmasq
+  notify: Handler_Restart_Dnsmasq
   become: true
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'render details of fallback nameserver'
-  template:
+- name: 'Render details of fallback nameserver'
+  ansible.builtin.template:
     src: forwarding_nameserver.j2
     dest: '{{dnsmasq_fallback_conf}}'
     group: root
     mode: '0644'
     owner: root
-  notify: handler_restart_dnsmasq
+  notify: Handler_Restart_Dnsmasq
   become: true
-  tags: ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'disable and mask systemd resolver service'
-  systemd:
+- name: 'Disable and mask systemd resolver service'
+  ansible.builtin.systemd:
     name: systemd-resolved.service
     enabled: false
     masked: true
-  notify: handler_reboot_server
+  notify: Handler_Reboot_Server
   become: true
-  tags:
-  - ct-dnsmasq
+  tags: [ct-dnsmasq]
 
-- name: 'enable and unmask Dnsmasq service'
-  systemd:
+- name: 'Enable and unmask Dnsmasq service'
+  ansible.builtin.systemd:
     name: '{{dnsmasq_unit_name}}'
     enabled: true
     masked: false
-  notify: handler_reboot_server
+  notify: Handler_Reboot_Server
   become: true
-  tags:
-  - ct-dnsmasq
+  tags: [ct-dnsmasq]
+
+# --------------------------------
 ...
