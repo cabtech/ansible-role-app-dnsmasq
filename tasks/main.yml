@@ -1,24 +1,23 @@
 ---
 # --------------------------------
 
-- name: 'Install Dnsmasq'
-  ansible.builtin.apt:
-    name: '{{dnsmasq_pkg_name}}'
-    state: '{{dnsmasq_state}}'
-    update_cache: '{{dnsmasq_update_cache}}'
-  become: true
-  tags: [ct-dnsmasq]
 
-- name: 'Get status of {{dnsmasq_resolv_conf}} (CM:false)'
+- name: "Include {{ ct_family }} tasks"
+  include_tasks: setup_{{ ct_family }}.yml
+  when:
+  - ct_family == "debian" or ct_family == "redhat"
+  tags: [ct-hashicorp]
+
+- name: "Get status of {{ dnsmasq_resolv_conf }} (CM:false)"
   ansible.builtin.stat:
-    path: '{{dnsmasq_resolv_conf}}'
+    path: "{{ dnsmasq_resolv_conf }}"
   check_mode: false
   register: stat_resolver
   tags: [ct-dnsmasq]
 
-- name: 'Remove {{dnsmasq_resolv_conf}} if it is a symlink'
+- name: "Remove {{ dnsmasq_resolv_conf }} if it is a symlink"
   ansible.builtin.file:
-    path: '{{dnsmasq_resolv_conf}}'
+    path: "{{ dnsmasq_resolv_conf }}"
     state: absent
   when:
   - stat_resolver.stat.islnk is defined
@@ -27,40 +26,40 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: 'Render Dnsmasq config file'
+- name: "Render Dnsmasq config file"
   ansible.builtin.template:
     src: default.j2
-    dest: '{{dnsmasq_etc_dir}}/default'
+    dest: "{{ dnsmasq_etc_dir }}/default"
     group: root
-    mode: '0644'
+    mode: "0644"
     owner: root
   notify: Handler_Restart_Dnsmasq
   become: true
   tags: [ct-dnsmasq]
 
-- name: 'Render {{dnsmasq_resolv_conf}}'
+- name: "Render {{ dnsmasq_resolv_conf }}"
   ansible.builtin.template:
     src: resolv.conf.j2
-    dest: '{{dnsmasq_resolv_conf}}'
+    dest: "{{ dnsmasq_resolv_conf }}"
     group: root
-    mode: '0644'
+    mode: "0644"
     owner: root
   notify: Handler_Restart_Dnsmasq
   become: true
   tags: [ct-dnsmasq]
 
-- name: 'Render details of fallback nameserver'
+- name: "Render details of fallback nameserver"
   ansible.builtin.template:
     src: forwarding_nameserver.j2
-    dest: '{{dnsmasq_fallback_conf}}'
+    dest: "{{ dnsmasq_fallback_conf }}"
     group: root
-    mode: '0644'
+    mode: "0644"
     owner: root
   notify: Handler_Restart_Dnsmasq
   become: true
   tags: [ct-dnsmasq]
 
-- name: 'Disable and mask systemd resolver service'
+- name: "Disable and mask systemd resolver service"
   ansible.builtin.systemd:
     name: systemd-resolved.service
     enabled: false
@@ -69,9 +68,9 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: 'Enable and unmask Dnsmasq service'
+- name: "Enable and unmask Dnsmasq service"
   ansible.builtin.systemd:
-    name: '{{dnsmasq_unit_name}}'
+    name: "{{ dnsmasq_unit_name }}"
     enabled: true
     masked: false
   notify: Handler_Reboot_Server
