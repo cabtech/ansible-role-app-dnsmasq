@@ -2,7 +2,7 @@
 # --------------------------------
 
 - name: "Install Dnsmasq"
-  ansible.builtin.apt:
+  ansible.builtin.yum:
     name: "{{ dnsmasq_pkg_name }}"
     state: "{{ dnsmasq_state }}"
     update_cache: "{{ dnsmasq_update_cache }}"
