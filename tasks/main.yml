@@ -20,10 +20,21 @@
     path: "{{ dnsmasq_resolv_conf }}"
     state: absent
   when:
-  - stat_resolver.stat.islnk is defined
-  - stat_resolver.stat.islnk
+  - (stat_resolver.stat.islnk is defined and stat_resolver.stat.islnk) or (stat_resolver.stat.isfile is defined and stat_resolver.stat.isfile)
   notify: Handler_Restart_Dnsmasq
   become: true
+  tags: [ct-dnsmasq]
+
+# https://aws.amazon.com/premiumsupport/knowledge-center/ec2-static-dns-ubuntu-debian/
+- name: "Inject line into  /etc/dhcp/dhclient.conf"
+  ansible.builtin.lineinfile:
+    line: "supersede domain-name-servers 127.0.0.1;"
+    path: /etc/dhcp/dhclient.conf
+    regexp: "^supersede domain-name-servers"
+    state: present
+  notify: Handler_Restart_Dnsmasq
+  become: true
+  when: ct_family == "redhat"
   tags: [ct-dnsmasq]
 
 - name: "Render Dnsmasq config file"
@@ -48,7 +59,7 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: "Render details of fallback nameserver"
+- name: "Render {{ dnsmasq_fallback_conf }} with details of fallback resolver"
   ansible.builtin.template:
     src: forwarding_nameserver.j2
     dest: "{{ dnsmasq_fallback_conf }}"
@@ -59,14 +70,23 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: "Disable and mask systemd resolver service"
-  ansible.builtin.systemd:
-    name: systemd-resolved.service
-    enabled: false
-    masked: true
-  notify: Handler_Reboot_Server
-  become: true
-  tags: [ct-dnsmasq]
+- name: "Block around systemd resolver service"
+  block:
+  - name: "Disable and mask systemd resolver service"
+    ansible.builtin.systemd:
+      name: systemd-resolved.service
+      enabled: false
+      masked: true
+    notify: Handler_Reboot_Server
+    become: true
+    tags: [ct-dnsmasq]
+  rescue:
+  - name: "Error handler"
+    ansible.builtin.debug:
+      msg: "ERROR :: with systemd resolver service"
+    notify: Handler_Reboot_Server
+    become: true
+    tags: [ct-dnsmasq]
 
 - name: "Enable and unmask Dnsmasq service"
   ansible.builtin.systemd:
