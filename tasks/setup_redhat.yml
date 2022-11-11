@@ -3,7 +3,7 @@
 
 - name: "Install Dnsmasq"
   ansible.builtin.yum:
-    name: "{{ dnsmasq_pkg_name }}"
+    name: "{{ dnsmasq_pkg_names.redhat }}"
     state: "{{ dnsmasq_state }}"
     update_cache: "{{ dnsmasq_update_cache }}"
   become: true
