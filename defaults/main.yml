@@ -1,13 +1,19 @@
 ---
+# --------------------------------
+
 dnsmasq_domains: []
 dnsmasq_etc_dir: /etc/dnsmasq.d
 dnsmasq_fallback_conf: /etc/fallback_resolv.conf
 dnsmasq_listen_ip: 127.0.0.1
 dnsmasq_ok_to_reboot: false
-dnsmasq_pkg_name: dnsmasq
+dnsmasq_pkg_names:
+  debian: ["dnsmasq"]
+  redhat: ["dnsmasq"]
 dnsmasq_resolv_conf: /etc/resolv.conf
 dnsmasq_reboot_timeout: 90
 dnsmasq_state: present
 dnsmasq_unit_name: dnsmasq.service
 dnsmasq_update_cache: true
+
+# --------------------------------
 ...
