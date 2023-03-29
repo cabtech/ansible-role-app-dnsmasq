@@ -1,21 +1,26 @@
 ---
 # --------------------------------
 
-
-- name: "Include {{ ct_family }} tasks"
-  include_tasks: setup-{{ ct_family }}.yml
-  when:
-  - ct_family == "debian" or ct_family == "redhat"
+- name: "Include Debian tasks"
+  ansible.builtin.include_tasks:
+    file: setup-debian.yml
+  when: ct_family == "debian"
   tags: [ct-hashicorp]
 
-- name: "Get status of {{ dnsmasq_resolv_conf }} (CM:false)"
+- name: "Include RedHat tasks"
+  ansible.builtin.include_tasks:
+    file: setup-redhat.yml
+  when: ct_family == "redhat"
+  tags: [ct-hashicorp]
+
+- name: "Get status of old resolver file (check_mode=false)"
   ansible.builtin.stat:
     path: "{{ dnsmasq_resolv_conf }}"
   check_mode: false
   register: stat_resolver
   tags: [ct-dnsmasq]
 
-- name: "Remove {{ dnsmasq_resolv_conf }} if it is a symlink"
+- name: "Remove old resolver file if it is a symlink"
   ansible.builtin.file:
     path: "{{ dnsmasq_resolv_conf }}"
     state: absent
@@ -59,7 +64,7 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: "Render {{ dnsmasq_fallback_conf }} with details of fallback resolver"
+- name: "Render details of fallback resolver"
   ansible.builtin.template:
     src: forwarding_nameserver.j2
     dest: "{{ dnsmasq_fallback_conf }}"
