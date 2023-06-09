@@ -1,6 +1,7 @@
 ---
 # --------------------------------
 
+dnsmasq_consul_addr: 127.0.0.1
 dnsmasq_domains: []
 dnsmasq_etc_dir: /etc/dnsmasq.d
 dnsmasq_fallback_conf: /etc/fallback_resolv.conf

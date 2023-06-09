@@ -3,5 +3,5 @@ resolv-file={{ dnsmasq_fallback_conf }}
 bind-interfaces
 listen-address={{ dnsmasq_listen_ip }}
 {% if dnsmasq_consul_port is defined %}
-server=/consul/{{ dnsmasq_listen_ip }}#{{ dnsmasq_consul_port }}
+server=/consul/{{ dnsmasq_consul_addr }}#{{ dnsmasq_consul_port }}
 {% endif %}
