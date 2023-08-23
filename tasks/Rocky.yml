@@ -1,9 +1,8 @@
 ---
 # --------------------------------
-# https://aws.amazon.com/premiumsupport/knowledge-center/ec2-static-dns-ubuntu-debian/
 
-- name: "Debian : Install packages"
-  ansible.builtin.apt:
+- name: "Install packages"
+  ansible.builtin.dnf:
     name: "{{ dnsmasq_pkg_names }}"
     state: "{{ dnsmasq_state }}"
     update_cache: "{{ dnsmasq_update_cache }}"
@@ -27,6 +26,32 @@
   become: true
   tags: [ct-dnsmasq]
 
+# https://aws.amazon.com/premiumsupport/knowledge-center/ec2-static-dns-ubuntu-debian/
+- name: "Rocky : Inject line into  /etc/dhcp/dhclient.conf"
+  ansible.builtin.lineinfile:
+    line: "supersede domain-name-servers 127.0.0.1;"
+    path: /etc/dhcp/dhclient.conf
+    regexp: "^supersede domain-name-servers"
+    state: present
+  notify: RestartDnsmasq
+  become: true
+  when: false  # keep handy for now
+  # when: ansible_os_family == "RedHat" and ansible_distribution != "Rocky"
+  tags: [ct-dnsmasq]
+
+- name: "Render NetworkManager config file"
+  ansible.builtin.template:
+    src: NetworkManager.conf.j2
+    dest: "{{ dnsmasq_networkmanager_cfg_dir }}/{{ dnsmasq_networkmanager_cfg_file }}"
+    group: root
+    mode: "0644"
+    owner: root
+  notify:
+  - RestartDnsmasq
+  - RestartNetworkManager
+  become: true
+  tags: [ct-dnsmasq]
+
 - name: "Render Dnsmasq config file"
   ansible.builtin.template:
     src: default.j2
@@ -34,18 +59,22 @@
     group: root
     mode: "0644"
     owner: root
-  notify: RestartDnsmasq
+  notify:
+  - RestartDnsmasq
+  - RestartNetworkManager
   become: true
   tags: [ct-dnsmasq]
 
-- name: "Render {{ dnsmasq_resolv_conf }}"
+- name: "Render resolver config"
   ansible.builtin.template:
     src: resolv.conf.j2
     dest: "{{ dnsmasq_resolv_conf }}"
     group: root
     mode: "0644"
     owner: root
-  notify: RestartDnsmasq
+  notify:
+  - RestartDnsmasq
+  - RestartNetworkManager
   become: true
   tags: [ct-dnsmasq]
 
@@ -56,28 +85,11 @@
     group: root
     mode: "0644"
     owner: root
-  notify: RestartDnsmasq
+  notify:
+  - RestartDnsmasq
+  - RestartNetworkManager
   become: true
   tags: [ct-dnsmasq]
-
-- name: "Block around systemd resolver service"
-  block:
-  - name: "Ubuntu : Disable and mask systemd resolver service"
-    ansible.builtin.systemd:
-      name: systemd-resolved.service
-      enabled: false
-      masked: true
-    register: reg_resolver
-    notify: RebootServer
-    become: true
-    tags: [ct-dnsmasq]
-  rescue:
-  - name: "Error handler"
-    ansible.builtin.debug:
-      var: reg_resolver
-    notify: RebootServer
-    become: true
-    tags: [ct-dnsmasq]
 
 # --------------------------------
 ...

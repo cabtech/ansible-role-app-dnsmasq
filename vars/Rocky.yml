@@ -1,0 +1,5 @@
+---
+dnsmasq_networkmanager_cfg_dir: /etc/NetworkManager
+dnsmasq_networkmanager_cfg_file: NetworkManager.conf
+dnsmasq_pkg_names: ["dnsmasq", "net-tools"]
+...

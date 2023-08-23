@@ -1,16 +1,28 @@
 ---
-- name: "Handler_Restart_Dnsmasq"
-  ansible.builtin.systemd:
-    daemon_reload: true
-    name: "{{ dnsmasq_unit_name }}"
-    no_block: true
-    state: restarted
-  become: true
+# --------------------------------
 
-- name: "Handler_Reboot_Server"
+- name: "RebootServer"
   ansible.builtin.reboot:
     pre_reboot_delay: 10
     reboot_timeout: "{{ dnsmasq_reboot_timeout }}"
   when: dnsmasq_ok_to_reboot
   become: true
+#
+- name: "RestartDnsmasq"
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ dnsmasq_svc_name }}"
+    no_block: true
+    state: restarted
+  become: true
+#
+- name: "RestartNetworkManager"
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "NetworkManager"
+    no_block: true
+    state: restarted
+  become: true
+
+# --------------------------------
 ...

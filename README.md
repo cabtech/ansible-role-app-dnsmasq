@@ -11,15 +11,17 @@ Install and config Dnsmasq on Ubuntu
 ## Default variables
 | Name | Type | Purpose | Value |
 | -----| ---- |------- | ----- |
+| dnsmasq_cfg_dir | UnixPath | where Dnsmasq keeps its config | `/etc/dnsmasq.d` |
 | dnsmasq_resolv_conf | UnixPath | standard location for resolver detail | `/etc/resolv.conf` |
-| dnsmasq_etc_dir | UnixPath | where Dnsmasq keeps its config | `/etc/dnsmasq.d` |
 | dnsmasq_fallback_conf| UnixPath | where to put details of fallback DNS server | `/etc/fallback_resolv.conf` |
 | dnsmasq_listen_ip | IpV4 | address for Dnsmasq to listen on | `127.0.0.1` |
 | dnsmasq_ok_to_reboot | Boolean | safety catch to prevent reboot | false |
 | dnsmasq_pkg_name | list(string) | what to install | dnsmasq |
 | dnsmasq_reboot_timeout | integer | how long to wait before checking the host is back | 90 |
 | dnsmasq_state | string | oneOf(present, absent) | present |
-| dnsmasq_svc_name | string | dnsmasq.service |
+| dnsmasq_svc_enabled | Boolean | decide whether to enable the service | true |
+| dnsmasq_svc_masked | Boolean | decide whether to mask the service | false |
+| dnsmasq_svc_name | string | name of the service | dnsmasq |
 
 ## Optional variables
 | Name | Type | Purpose | Typical Value |
@@ -31,6 +33,5 @@ If you're updating cloud servers with variable IP addresses, then post reboot ch
 
 ## To Do
 * setting dnsmasq_state to absent should reinstall the SystemD Resolver
-* support RH based systems
 
 ****
