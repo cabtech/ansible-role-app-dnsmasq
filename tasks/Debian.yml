@@ -38,13 +38,26 @@
   become: true
   tags: [ct-dnsmasq]
 
-- name: "Render {{ dnsmasq_resolv_conf }}"
+- name: "Render resolver config for AWS"
   ansible.builtin.template:
-    src: resolv.conf.j2
+    src: resolv.conf.aws.j2
     dest: "{{ dnsmasq_resolv_conf }}"
     group: root
     mode: "0644"
     owner: root
+  when: "'aws' in group_names"
+  notify: RestartDnsmasq
+  become: true
+  tags: [ct-dnsmasq]
+
+- name: "Render generic resolver config"
+  ansible.builtin.template:
+    src: resolv.conf.basic.j2
+    dest: "{{ dnsmasq_resolv_conf }}"
+    group: root
+    mode: "0644"
+    owner: root
+  when: "'aws' not in group_names"
   notify: RestartDnsmasq
   become: true
   tags: [ct-dnsmasq]
