@@ -1,2 +1,2 @@
-.alint
-.ylint
+.ansible/
+.lint*

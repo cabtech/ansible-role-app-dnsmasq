@@ -1,10 +1,10 @@
-lint: .ylint .alint
+lint: .lintyaml .lintansible
 
-.alint: */*.yml .config/ansible-lint.yml
+.lintansible: */*.yml .config/ansible-lint.yml
 	ansible-lint --config-file=.config/ansible-lint.yml
 	@touch $@
 
-.ylint: */*.yml .config/yamllint
+.lintyaml: */*.yml .config/yamllint
 	yamllint --config-file=.config/yamllint .
 	@touch $@
 
@@ -13,4 +13,4 @@ push:
 	rsync -a * /mnt/hgfs/shared/ansible-role-app-dnsmasq
 
 clean:
-	@/bin/rm -f .alint .ylint
+	@/bin/rm -f .lint*
