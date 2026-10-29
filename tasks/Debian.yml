@@ -8,14 +8,14 @@
     state: "{{ dnsmasq_state }}"
     update_cache: "{{ dnsmasq_update_cache }}"
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Get status of old resolver file (check_mode=false)"
   ansible.builtin.stat:
     path: "{{ dnsmasq_resolv_conf }}"
   check_mode: false
   register: stat_resolver
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Remove old resolver file if it is a symlink"
   ansible.builtin.file:
@@ -25,7 +25,7 @@
   - (stat_resolver.stat.islnk is defined and stat_resolver.stat.islnk) or (stat_resolver.stat.isfile is defined and stat_resolver.stat.isfile)
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render Dnsmasq config file"
   ansible.builtin.template:
@@ -36,7 +36,7 @@
     owner: root
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render resolver config for AWS"
   ansible.builtin.template:
@@ -48,7 +48,7 @@
   when: "'aws' in group_names"
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render generic resolver config"
   ansible.builtin.template:
@@ -60,7 +60,7 @@
   when: "'aws' not in group_names"
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render details of fallback resolver"
   ansible.builtin.template:
@@ -71,9 +71,10 @@
     owner: root
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Block around systemd resolver service"
+  tags: ["ct-dnsmasq"]
   block:
   - name: "Ubuntu : Disable and mask systemd resolver service"
     ansible.builtin.systemd:
@@ -83,14 +84,14 @@
     register: reg_resolver
     notify: RebootServer
     become: true
-    tags: [ct-dnsmasq]
+    tags: ["ct-dnsmasq"]
   rescue:
   - name: "Error handler"
     ansible.builtin.debug:
       var: reg_resolver
     notify: RebootServer
     become: true
-    tags: [ct-dnsmasq]
+    tags: ["ct-dnsmasq"]
 
 # --------------------------------
 ...

@@ -7,14 +7,14 @@
     state: "{{ dnsmasq_state }}"
     update_cache: "{{ dnsmasq_update_cache }}"
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Get status of old resolver file (check_mode=false)"
   ansible.builtin.stat:
     path: "{{ dnsmasq_resolv_conf }}"
   check_mode: false
   register: stat_resolver
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Remove old resolver file if it is a symlink"
   ansible.builtin.file:
@@ -24,7 +24,7 @@
   - (stat_resolver.stat.islnk is defined and stat_resolver.stat.islnk) or (stat_resolver.stat.isfile is defined and stat_resolver.stat.isfile)
   notify: RestartDnsmasq
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 # https://aws.amazon.com/premiumsupport/knowledge-center/ec2-static-dns-ubuntu-debian/
 - name: "Rocky : Inject line into  /etc/dhcp/dhclient.conf"
@@ -37,7 +37,7 @@
   become: true
   when: false  # keep handy for now
   # when: ansible_os_family == "RedHat" and ansible_distribution != "Rocky"
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render NetworkManager config file"
   ansible.builtin.template:
@@ -50,7 +50,7 @@
   - RestartDnsmasq
   - RestartNetworkManager
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render Dnsmasq config file"
   ansible.builtin.template:
@@ -63,7 +63,7 @@
   - RestartDnsmasq
   - RestartNetworkManager
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render resolver config"
   ansible.builtin.template:
@@ -76,7 +76,7 @@
   - RestartDnsmasq
   - RestartNetworkManager
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Render details of fallback resolver"
   ansible.builtin.template:
@@ -89,7 +89,7 @@
   - RestartDnsmasq
   - RestartNetworkManager
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 # --------------------------------
 ...

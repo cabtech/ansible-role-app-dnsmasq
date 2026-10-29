@@ -4,7 +4,7 @@
 - name: "Include variable"
   ansible.builtin.include_tasks:
     file: variables.yml
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Include tasks (FF)"
   ansible.builtin.include_tasks:
@@ -18,7 +18,7 @@
       - default.yml
       paths:
       - "tasks"
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 - name: "Enable and unmask Dnsmasq service"
   ansible.builtin.systemd:
@@ -26,7 +26,7 @@
     enabled: "{{ dnsmasq_svc_enabled | bool }}"
     masked: "{{ dnsmasq_svc_masked | bool }}"
   become: true
-  tags: [ct-dnsmasq]
+  tags: ["ct-dnsmasq"]
 
 # --------------------------------
 ...
